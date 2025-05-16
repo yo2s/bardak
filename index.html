@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>바르닭 프로모션 맞춤 플랜 보고서</title>
+    <style>
+        /* PDF 출력 최적화 스타일 */
+        @page {
+            size: A4;
+            margin: 15mm;
+        }
+        @media print {
+            body {
+                margin: 0;
+                padding: 0;
+                background-color: white;
+            }
+            .page {
+                width: 100%;
+                height: auto;
+                margin: 0;
+                padding: 0;
+                box-shadow: none;
+                page-break-after: always;
+                background-color: white;
+            }
+        }
+        
+        /* 전체 스타일 */
+        body {
+            font-family: 'Malgun Gothic', 'Apple SD Gothic Neo', sans-serif;
+            color: #333;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f5f5;
+        }
+        .page {
+            width: 210mm;
+            max-width: 800px;
+            margin: 0 auto 30px auto;
+            padding: 30px;
+            background-color: #fff;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.05);
+            border-radius: 8px;
+            box-sizing: border-box;
+        }
+        /* 헤더 섹션 */
+        .header {
+            text-align: center;
+            padding: 20px 0 30px;
+            border-bottom: 1px solid #eee;
+            margin-bottom: 30px;
+        }
+        .header h1 {
+            color: #2310FF;
+            font-size: 28px;
+            margin: 0;
+            font-weight: 700;
+        }
+        .header p {
+            color: #666;
+            font-size: 16px;
+            margin: 10px 0 0;
+        }
+        /* 섹션 스타일 */
+        .section {
+            margin-bottom: 40px;
+        }
+        .section-title {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .section-title h2 {
+            font-size: 22px;
+            margin: 0;
+            color: #2310FF;
+            font-weight: 600;
+        }
+        .section-title .emoji {
+            font-size: 24px;
+            margin-right: 10px;
+        }
+        .card {
+            background-color: #f9f9f9;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-left: 4px solid #2310FF;
+        }
+        .card h3 {
+            font-size: 18px;
+            color: #2310FF;
+            margin-top: 0;
+            margin-bottom: 12px;
+            font-weight: 600;
+        }
+        .card p {
+            margin: 8px 0;
+            font-size: 15px;
+        }
+        /* 타겟 그룹 스타일 */
+        .target {
+            margin-bottom: 25px;
+        }
+        .target h3 {
+            font-size: 18px;
+            color: #333;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+        .target-description {
+            background-color: #f0f4ff;
+            padding: 15px;
+            border-radius: 6px;
+            font-size: 15px;
+        }
+        .reason {
+            margin-top: 10px;
+            padding-left: 15px;
+            border-left: 3px solid #e1e6f5;
+            color: #666;
+            font-size: 14px;
+        }
+        /* 메시지 전략 스타일 */
+        .message-strategy {
+            display: flex;
+            flex-wrap: wrap;
+            margin: 0 -10px;
+        }
+        .strategy-card {
+            flex: 1 1 calc(50% - 20px);
+            margin: 10px;
+            background-color: #f0f4ff;
+            border-radius: 8px;
+            padding: 15px;
+            min-width: 200px;
+        }
+        .strategy-card h4 {
+            font-size: 16px;
+            color: #2310FF;
+            margin-top: 0;
+            margin-bottom: 10px;
+        }
+        .strategy-card ul, .strategy-card ol {
+            padding-left: 20px;
+            margin: 10px 0;
+        }
+        .strategy-card li {
+            margin-bottom: 5px;
+        }
+        
+        /* 블러 카드 (완전히 새로운 설계) */
+        .blur-card {
+            flex: 1 1 calc(50% - 20px);
+            margin: 10px;
+            background-color: #f0f4ff;
+            border-radius: 8px;
+            padding: 15px;
+            min-width: 200px;
+            position: relative;
+        }
+        
+        .blur-card h4 {
+            color: #2310FF;
+            font-size: 16px;
+            margin-top: 0;
+            margin-bottom: 10px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .blur-content {
+            position: relative;
+            min-height: 180px;
+            background-color: #f0f4ff;
+            border-radius: 6px;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+        
+        .blur-question {
+            font-size: 70px;
+            color: #2310FF;
+            margin-bottom: 20px;
+        }
+        
+        .blur-message {
+            color: #2310FF;
+            font-weight: bold;
+            font-size: 15px;
+            line-height: 1.5;
+            margin-bottom: 25px;
+        }
+        
+        .blur-button {
+            background-color: #2310FF;
+            color: white;
+            border: none;
+            border-radius: 25px;
+            padding: 10px 20px;
+            font-size: 14px;
+            font-weight: bold;
+            text-decoration: none;
+            display: inline-block;
+            box-shadow: 0 3px 6px rgba(35, 16, 255, 0.2);
+            margin-bottom: 10px;
+        }
+        
+        /* 하단 CTA */
+        .bottom-cta {
+            text-align: center;
+            margin: 40px 0 20px 0;
+            padding: 30px;
+            background: #2310FF;
+            border-radius: 12px;
+            color: white;
+            box-shadow: 0 10px 30px rgba(35, 16, 255, 0.2);
+        }
+        .bottom-cta h2 {
+            font-size: 24px;
+            margin-bottom: 15px;
+        }
+        .bottom-cta p {
+            font-size: 16px;
+            margin-bottom: 25px;
+            opacity: 0.9;
+        }
+        .big-button {
+            display: inline-block;
+            background: white;
+            color: #2310FF;
+            font-weight: bold;
+            padding: 15px 40px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-size: 18px;
+            transition: all 0.3s ease;
+        }
+        .small-text {
+            font-size: 14px;
+            margin-top: 20px;
+            opacity: 0.8;
+        }
+        /* 푸터 스타일 */
+        .footer {
+            text-align: center;
+            padding-top: 20px;
+            color: #888;
+            font-size: 14px;
+        }
+        /* 강조 효과 */
+        .highlight {
+            background-color: #FFE980;
+            padding: 2px 4px;
+            border-radius: 3px;
+        }
+        .badge {
+            display: inline-block;
+            background-color: #2310FF;
+            color: white;
+            font-size: 12px;
+            padding: 3px 8px;
+            border-radius: 12px;
+            margin-left: 8px;
+        }
+        .page-number {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 12px;
+            color: #aaa;
+        }
+        
+        /* PDF 프로모션 영역 */
+        .pdf-promo {
+            background-color: #f9f9f9;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 30px 0;
+            text-align: center;
+        }
+        .pdf-promo h3 {
+            font-size: 18px;
+            color: #555;
+            margin-top: 0;
+            margin-bottom: 15px;
+        }
+        .pdf-promo p {
+            color: #666;
+            margin-bottom: 15px;
+            font-size: 15px;
+        }
+        .promo-button {
+            background-color: #2310FF;
+            color: white;
+            border: none;
+            border-radius: 25px;
+            padding: 10px 25px;
+            font-size: 15px;
+            font-weight: bold;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            box-shadow: 0 3px 6px rgba(35, 16, 255, 0.2);
+        }
+    </style>
+</head>
+<body>
+    <!-- 페이지 1: 타겟팅 전략 -->
+    <div class="page">
+        <!-- 헤더 섹션 -->
+        <div class="header">
+            <h1>바르닭 프로모션 맞춤 플랜</h1>
+            <p>이달의 할인쿠폰! 30% 할인 프로모션에 최적화된 타겟 그룹과 메시지 전략</p>
+        </div>
+
+        <!-- 타겟팅 전략 섹션 -->
+        <div class="section">
+            <div class="section-title">
+                <div class="emoji">🎯</div>
+                <h2>타겟팅 전략</h2>
+            </div>
+            
+            <div class="target">
+                <h3>핵심 타겟 <span class="badge">최우선</span></h3>
+                <div class="target-description">
+                    최근 30일 이내 장바구니에 닭가슴살, 도시락·볶음밥, 간편한끼, 착한간식 등 주요 식단 관리 제품을 담았으나 구매로 이어지지 않은 고객
+                </div>
+                <div class="reason">
+                    <strong>선정 근거:</strong> 30%라는 높은 할인율은 구매를 망설였던 고객의 전환율을 크게 높일 수 있음. 장바구니 이탈 고객은 이미 구매 의사가 높으므로 할인 메시지에 가장 즉각적으로 반응할 가능성이 큼.
+                </div>
+            </div>
+
+            <div class="target">
+                <h3>보조 타겟 <span class="badge">다음 우선순위</span></h3>
+                <div class="target-description">
+                    최근 3개월 내 해당 할인 카테고리(닭가슴살, 도시락·볶음밥, 간편한끼, 착한간식 등) 상품 구매 이력이 있는 기존 고객 + 신규 가입 후 아직 첫 구매가 없는 회원('첫구매 0원' 및 추가 할인 유인 가능)
+                </div>
+                <div class="reason">
+                    <strong>선정 근거:</strong> 할인 품목의 재구매율이 높은 식단 관리 식품 특성상, 기존 고객의 재구매 유도 효과가 높음. 또한 신규 회원은 할인+첫구매 혜택의 중복 적용으로 첫 구매 전환을 극대화할 수 있음.
+                </div>
+            </div>
+
+            <div class="target">
+                <h3>제외 대상 <span class="badge">제외</span></h3>
+                <div class="target-description">
+                    최근 7일 내 할인 적용 품목을 이미 구매한 고객
+                </div>
+                <div class="reason">
+                    <strong>제외 근거:</strong> 불필요한 중복 혜택 제공 및 불만 유발 방지. 이미 구매한 고객에게 추가 할인 메시지를 발송하면 오히려 부정적 경험을 줄 수 있음.
+                </div>
+            </div>
+        </div>
+        
+        <div class="page-number">1/2</div>
+    </div>
+
+    <!-- 페이지 2: 메시지 전략 및 CTA -->
+    <div class="page">
+        <!-- 메시지 전략 섹션 -->
+        <div class="section">
+            <div class="section-title">
+                <div class="emoji">💬</div>
+                <h2>메시지 전략</h2>
+            </div>
+            
+            <div class="card">
+                <h3>메시지 형태: 와이드리스트형</h3>
+                <p>- 할인율(<span class="highlight">30%</span>)과 기간 한정성을 메인 이미지/텍스트에서 강하게 강조</p>
+                <p>- 리스트 항목에는 '닭가슴살 베스트', '간편한끼 인기', '착한간식 추천', '도시락·볶음밥 특가' 등 카테고리별 대표 상품 이미지와 간단한 혜택 문구(예: "식단 관리 필수템, 지금 30%↓")를 배치</p>
+                <p>- 하단 버튼은 "지금 구매", "쿠폰 받기" 등 즉시 행동을 유도하는 문구 활용</p>
+                <p>- 시각적 긴급성(타임특가, 한정 수량 등) 요소 삽입</p>
+            </div>
+
+            <div class="message-strategy">
+                <div class="strategy-card">
+                    <h4>권장 발송 횟수</h4>
+                    <ul>
+                        <li>프로모션 시작일 1회</li>
+                        <li>프로모션 종료 2일 전 리마인더 1회</li>
+                        <li>필요 시, 장바구니 이탈 고객에게 한정 추가 1회(개인화 메시지) 발송</li>
+                    </ul>
+                </div>
+
+                <div class="blur-card">
+                    <h4>최적 발송 시점</h4>
+                    <div class="blur-content">
+                        <div class="blur-question">?</div>
+                        <div class="blur-message">실제 맞춤플랜을 이용하시면<br>최적 발송 시점과 더 많은 프로모션을<br>확인할 수 있습니다</div>
+                        <a href="https://app.keepgrow.com/products/process-templates/414?utm_source=crm&utm_medium=email&utm_campaign=kane" class="blur-button">
+                            맞춤플랜 이용하기
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- PDF용 추가 프로모션 영역 -->
+            <div class="pdf-promo">
+                <h3>지금 바로 맞춤플랜의 모든 기능을 경험해보세요!</h3>
+                <p>데이터 기반 타겟팅과 최적 발송 시점으로 메시지 마케팅 효율을 2배 이상 높이세요</p>
+                <a href="https://app.keepgrow.com/products/process-templates/414?utm_source=crm&utm_medium=email&utm_campaign=kane" class="promo-button">
+                    🚀 맞춤플랜 무료로 시작하기
+                </a>
+            </div>
+        </div>
+
+        <!-- 하단 CTA 섹션 -->
+        <div class="bottom-cta">
+            <h2>지금 바로 맞춤플랜의 모든 기능을 경험해보세요!</h2>
+            <p>데이터 기반 타겟팅과 최적 발송 시점으로 메시지 마케팅 효율을 2배 이상 높이세요</p>
+            <a href="https://app.keepgrow.com/products/process-templates/414?utm_source=crm&utm_medium=email&utm_campaign=kane" class="big-button">
+                🚀 맞춤플랜 무료로 시작하기
+            </a>
+            <p class="small-text">* 평균 전환율 193% 상승, 평균 장바구니 회수율 85% 상승을 경험한 고객들의 선택</p>
+        </div>
+
+        <!-- 푸터 -->
+        <div class="footer">
+            <p>© 2025 1초 맞춤톡 by 킵그로우</p>
+            <p>데이터 기반 카카오톡 메시지 마케팅 솔루션</p>
+        </div>
+        
+        <div class="page-number">2/2</div>
+    </div>
+</body>
+</html>
